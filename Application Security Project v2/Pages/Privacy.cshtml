@@ -1,0 +1,29 @@
+﻿@page
+@model PrivacyModel
+@{
+    ViewData["Title"] = "Privacy Policy";
+}
+<h1>@ViewData["Title"]</h1>
+
+<p>Use this page to detail your site's privacy policy.</p>
+
+<script>
+    (function () {
+
+        const idleDurationSecs = 30;
+        const redirectUrl = '/Login';
+        let timeout;
+
+        const resetTimeout = function () {
+            if (timeout) clearTimeout(timeout);
+            timeout = setTimeout(() => location.href = redirectUrl, idleDurationSecs * 1000);
+        };
+
+        resetTimeout();
+
+        ['click', 'touchstart', 'mousemove', 'onkeydown'].forEach(evt =>
+            document.addEventListener(evt, resetTimeout, false)
+        );
+
+    })();
+</script>

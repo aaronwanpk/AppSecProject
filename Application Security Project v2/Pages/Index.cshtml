@@ -1,0 +1,70 @@
+﻿@page
+@model IndexModel
+@using Application_Security_Project_v2.Services
+@{
+    ViewData["Title"] = "Home page";
+}
+
+<div>
+    <h1>Welcome: @HttpContext.Session.GetString("_Name")</h1>
+    <table class="table mt-3">
+        <thead>
+            <tr>
+                <th>@Html.DisplayNameFor(model => model.CustomerList[0].ImageURL)</th>
+                <th>@Html.DisplayNameFor(model => model.CustomerList[0].FName)</th>
+                <th>@Html.DisplayNameFor(model => model.CustomerList[0].LName)</th>
+                <th>@Html.DisplayNameFor(model => model.CustomerList[0].Email)</th>
+                <th>@Html.DisplayNameFor(model => model.CustomerList[0].CreditCard)</th>
+                <th>@Html.DisplayNameFor(model => model.CustomerList[0].PasswordHash)</th>
+                <th>@Html.DisplayNameFor(model => model.CustomerList[0].Salt)</th>
+                <th>@Html.DisplayNameFor(model => model.CustomerList[0].DateBirth)</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @{
+                @foreach (var item in Model.CustomerList)
+                {
+                    
+                    <tr>
+                        <td><img id="imgPreview" class="rounded-circle" style="height:300px;width:300px;object-fit:cover"
+                     src="@(string.IsNullOrEmpty(@item.ImageURL) ? "/uploads/user.png" : @item.ImageURL)" 
+                     onerror="this.src='/uploads/user.png'" /></td>
+                        <td>@item.FName</td>
+                        <td>@item.LName</td>
+                        <td>@item.Email</td>
+                        <td>@item.CreditCard</td>
+                        <td>@item.PasswordHash</td>
+                        <td>@item.Salt</td>
+                        <td>@item.DateBirth.ToShortDateString()</td>
+                        <td>@item.AboutMe</td>
+                        <td>
+                            <a class="btn btn-danger" asp-page="/Delete" asp-route-id="@item.Email">Delete</a>
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>
+
+<script>
+    (function () {
+
+        const idleDurationSecs = 30;
+        const redirectUrl = '/Login';
+        let timeout;
+
+        const resetTimeout = function () {
+            if (timeout) clearTimeout(timeout);
+            timeout = setTimeout(() => location.href = redirectUrl, idleDurationSecs * 1000);
+        };
+
+        resetTimeout();
+
+        ['click', 'touchstart', 'mousemove', 'onkeydown'].forEach(evt =>
+            document.addEventListener(evt, resetTimeout, false)
+        );
+
+    })();
+</script>

@@ -1,0 +1,73 @@
+﻿@page
+@using Microsoft.Extensions.Configuration
+@using Microsoft.Extensions.Options
+@using Application_Security_Project_v2.Services
+@inject IOptions<GoogleCaptchaChain> GoogleCaptchaChain
+@model Application_Security_Project_v2.Pages.LoginModel
+@{
+    ViewData["Title"] = "Login";
+}
+
+<div class="container mt-5">
+
+	<div class="row justify-content-center align-items-center">
+
+		<div class="col-sm-12 col-md-12 col-lg-4">
+			<h1 class="mb-3">Login </h1>
+
+			<form method="post" asp-antiforgery="true">
+				<div asp-validation-summary="All" class="text-danger"></div>
+
+				<div class="mb-3">
+					<input type="hidden" id="GoogleTokenField" class="form-control" asp-for="TokenCaptcha" />
+					<span asp-validation-for="TokenCaptcha" class="text-danger"></span>
+				</div>
+
+				<div class="mb-3">
+					<label class="form-label" asp-for="LoginInfo.Email">Email Address</label>
+					<input type="email" asp-for="LoginInfo.Email" class="form-control" />
+					<span asp-validation-for="LoginInfo.Email" class="text-danger"></span>
+				</div>
+
+				<div class="mb-3">
+					<label class="form-label" asp-for="LoginInfo.PasswordHash">Password</label>
+					<input type="password" asp-for="LoginInfo.PasswordHash" class="form-control" />
+					<span asp-validation-for="LoginInfo.PasswordHash" class="text-danger"></span>
+				</div>
+
+				<div class="mb-3 form-check">
+					<input type="checkbox" asp-for="LoginInfo.RememberMe" class="form-check-input" />
+					<label class="form-check-label" asp-for="LoginInfo.RememberMe">Remember Me?</label>
+				</div>
+
+				<div class="mb-3">
+					<button type="submit" class="btn btn-primary">Login</button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+
+<script src="https://www.google.com/recaptcha/api.js?render=@GoogleCaptchaChain.Value.SiteKey"></script>
+<script>
+	function getToken() {
+		grecaptcha.ready(function () {
+			grecaptcha.execute('@GoogleCaptchaChain.Value.SiteKey', { action: 'submit' }).then(function (token) {
+				document.getElementById("GoogleTokenField").value = token;
+				console.log(document.getElementById("GoogleTokenField"));
+			});
+		});
+	}
+
+	setInterval(getToken(), 115000);
+
+	$(function () {
+		getToken();
+	});
+</script>
+
+@section Scripts {
+	@{
+		await Html.RenderPartialAsync("_ValidationScriptsPartial");
+	}
+}
